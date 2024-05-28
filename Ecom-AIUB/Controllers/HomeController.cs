@@ -27,7 +27,11 @@ namespace Ecom_AIUB.Controllers
             var products = await _db.Products.Include(p => p.Category).ToListAsync();
             if (products.Count > 0)
             {
-                return View(products);
+                var groupedProducts = products.GroupBy(p => new { p.Category.Id, p.Category.Name })
+                                              .Select(g => new { CategoryId = g.Key.Id, CategoryName = g.Key.Name, Products = g.ToList() })
+                                              .ToList();
+
+                return View(groupedProducts);
             }
             else
             {

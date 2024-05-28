@@ -10,8 +10,22 @@
     <!--slick-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        footer {
+            width: 100%;
+        }
+        .footer-container {
+            max-width: 1120px;
+            padding: 0 3rem;
+            margin: 0 auto;
+        }
+    </style>
 </head>
-<body>
+<body class="d-flex flex-column gap-3">
     <header class="container mt-3">
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
@@ -75,47 +89,51 @@
         </main>
     </div>
 
-    <footer class="bg-dark text-white mb-0 pb-0 border-top">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 gx-5 py-5 mx-auto" style="max-width: 1120px !important; padding: 0 3rem;">
-            <div class="col d-flex flex-column gap-3">
-                <img src="~/assets/images/footer-logo.svg" alt="footer logo">
-                <p>
-                    Get shoes ready for the new term at your nearest Nike store. Find
-                    Your perfect Size In Store. Get Rewards
-                </p>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-white p-2 rounded-circle">
-                        <img src="~/assets/icons/facebook.svg" alt="Facebook" />
+    <footer class="border-top">
+        <div class="bg-dark text-white mb-0 pb-0">
+            <div class="footer-container">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 gx-5 py-5">
+                    <div class="col d-flex flex-column gap-3">
+                        <img src="~/assets/images/footer-logo.svg" alt="footer logo">
+                        <p>
+                            Get shoes ready for the new term at your nearest Nike store. Find
+                            Your perfect Size In Store. Get Rewards
+                        </p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-white p-2 rounded-circle">
+                                <img src="~/assets/icons/facebook.svg" alt="Facebook" />
+                            </div>
+                            <div class="bg-white p-2 rounded-circle">
+                                <img src="~/assets/icons/instagram.svg" alt="Instagram" />
+                            </div>
+                            <div class="bg-white p-2 rounded-circle">
+                                <img src="~/assets/icons/twitter.svg" alt="Twitter" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-white p-2 rounded-circle">
-                        <img src="~/assets/icons/instagram.svg" alt="Instagram" />
+                    <div class="col">
+                        <h4>Products</h4>
+                        <a class="text-decoration-none text-white" href="#">Sneaker-1</a>
+                        <br />
+                        <a class="text-decoration-none text-white" href="#">Sneaker-2</a>
+                        <br />
+                        <a class="text-decoration-none text-white" href="#">Sneaker-3</a>
                     </div>
-                    <div class="bg-white p-2 rounded-circle">
-                        <img src="~/assets/icons/twitter.svg" alt="Twitter" />
+                    <div class="col">
+                        <h4>Help</h4>
+                        <a class="text-decoration-none text-white" href="#">About us</a>
+                        <br />
+                        <a class="text-decoration-none text-white" href="#">FAQs</a>
+                        <br />
+                        <a class="text-decoration-none text-white" href="#">Privacy policy</a>
+                    </div>
+                    <div class="col">
+                        <h4>Get in touch</h4>
+                        <a class="text-decoration-none text-white" href="#">customer@nike.com</a>
+                        <br />
+                        <a class="text-decoration-none text-white" href="#">+92554862354</a>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <h4>Products</h4>
-                <a class="text-decoration-none text-white" href="#">Sneaker-1</a>
-                <br />
-                <a class="text-decoration-none text-white" href="#">Sneaker-2</a>
-                <br />
-                <a class="text-decoration-none text-white" href="#">Sneaker-3</a>
-            </div>
-            <div class="col">
-                <h4>Help</h4>
-                <a class="text-decoration-none text-white" href="#">About us</a>
-                <br />
-                <a class="text-decoration-none text-white" href="#">FAQs</a>
-                <br />
-                <a class="text-decoration-none text-white" href="#">Privacy policy</a>
-            </div>
-            <div class="col">
-                <h4>Get in touch</h4>
-                <a class="text-decoration-none text-white" href="#">customer@nike.com</a>
-                <br />
-                <a class="text-decoration-none text-white" href="#">+92554862354</a>
             </div>
         </div>
     </footer>
@@ -131,7 +149,42 @@
         $('.hero_slide').slick({
             autoplay: true,
             autoplaySpeed: 2000,
+        }); 
+        $('.slide_products').slick({
+            slidesToShow: 4,
+            autoplay: true,
+            autoplaySpeed: 2000,
+            responsive: [
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 1,
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 1
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }
+                // You can unslick at a given breakpoint now by adding:
+                // settings: "unslick"
+                // instead of a settings object
+            ]
         });
+        $('.product_page_slide').slick({
+            autoplay: true,
+            autoplaySpeed: 2000,
+        }); 
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

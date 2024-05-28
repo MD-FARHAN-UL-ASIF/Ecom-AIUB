@@ -3,6 +3,7 @@ using Ecom_AIUB.Models;
 using Ecom_AIUB.Models.DTOs;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecom_AIUB.Controllers
 {
@@ -88,6 +89,30 @@ namespace Ecom_AIUB.Controllers
         }
         public IActionResult Delete()
         {
+            return View();
+        }
+
+        [HttpGet]
+        [Route("/category/products/{id}")]
+        public async Task<IActionResult> ProductByCategory(int id)
+        {
+            var category = await _db.Category.FindAsync(id);
+            var categories = await _db.Category.ToListAsync();
+            if (category != null)
+            {
+                var products = await _db.Products.Where(x => x.Category_Id == id).ToListAsync();
+                if (products.Count > 0)
+                {
+                    var data = new
+                    {
+                        categoryData = category,
+                        categoriesData = categories,
+                        productsData = products
+                    };
+                    return View(data);
+                }
+            }
+            ViewBag.ErrMessage = "Something went wrong!";
             return View();
         }
 
