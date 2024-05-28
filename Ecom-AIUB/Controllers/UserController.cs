@@ -1,113 +1,116 @@
-﻿using Ecom_AIUB.EF;
-using Ecom_AIUB.Models;
-using Ecom_AIUB.Models.DTOs;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿    using Ecom_AIUB.EF;
+    using Ecom_AIUB.Models;
+    using Ecom_AIUB.Models.DTOs;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
 
-namespace Ecom_AIUB.Controllers
-{
-    public class UserController : Controller
+    namespace Ecom_AIUB.Controllers
     {
-        private readonly ILogger<UserController> _logger;
-        private readonly DataContext _db;
-
-        public UserController(ILogger<UserController> logger, DataContext data)
+        public class UserController : Controller
         {
-            _logger = logger;
-            _db = data;
-        }
+            private readonly ILogger<UserController> _logger;
+            private readonly DataContext _db;
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        [Route("/signup")]
-        public IActionResult SignUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [Route("/signup")]
-        public async Task<IActionResult> SignUp(UserDTO data)
-        {
-            var user = new User()
+            public UserController(ILogger<UserController> logger, DataContext data)
             {
-                Name = data.Name,
-                Email = data.Email,
-                Password = data.Password,
-                PhoneNumber = data.PhoneNumber,
-                UserType = 2
-            };
+                _logger = logger;
+                _db = data;
+            }
 
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
-
-            return RedirectToAction("Login");
-        }
-
-        [HttpGet]
-        [Route("/login")]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [Route("/login")]
-        public async Task<IActionResult> Login(UserDTO data)
-        {
-            var user = _db.Users.FirstOrDefault(x => x.Email == data.Email && x.Password == data.Password);
-
-            if (user != null)
+            public IActionResult Index()
             {
-                var claims = new List<Claim>
+                return View();
+            }
+
+            [HttpGet]
+            [Route("/signup")]
+            public IActionResult SignUp()
+            {
+                return View();
+            }
+
+            [HttpPost]
+            [Route("/signup")]
+            public async Task<IActionResult> SignUp(UserDTO data)
+            {
+                var user = new User()
                 {
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim("UserType", user.UserType.ToString())
+                    Name = data.Name,
+                    Email = data.Email,
+                    Password = data.Password,
+                    PhoneNumber = data.PhoneNumber,
+                    UserType = 2
                 };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                _db.Users.Add(user);
+                await _db.SaveChangesAsync();
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                return RedirectToAction("Login");
+            }
 
-                if (user.UserType == 1)
+            [HttpGet]
+            [Route("/login")]
+            public IActionResult Login()
+            {
+                return View();
+            }
+
+            [HttpPost]
+            [Route("/login")]
+            public async Task<IActionResult> Login(UserDTO data)
+            {
+                var user = _db.Users.FirstOrDefault(x => x.Email == data.Email && x.Password == data.Password);
+
+                if (user != null)
                 {
-                    HttpContext.Session.SetString("email", user.Email);
-                    return RedirectToAction("AdminDashboard", "Home");
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Name),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim("UserType", user.UserType.ToString())
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                    if (user.UserType == 1)
+                    {
+                        HttpContext.Session.SetString("email", user.Email);
+                        return RedirectToAction("AdminDashboard", "Home");
+                    }
+                    else
+                    {
+                        HttpContext.Session.SetString("email", user.Email);
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 else
                 {
-                    HttpContext.Session.SetString("email", user.Email);
-                    return RedirectToAction("UserDashboard", "Home");
+                    ViewBag.Message = "User Not Found :(";
+                    return View();
                 }
             }
-            else
-            {
-                ViewBag.Message = "User Not Found :(";
-                return View();
-            }
-        }
 
         [HttpGet]
         [Route("/logout")]
         public async Task<IActionResult> Logout()
         {
+            HttpContext.Session.Clear();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            return RedirectToAction("Index", "Home"); 
         }
 
+
         public IActionResult AccessDenied()
-        {
-            return View();
+            {
+                return View();
+            }
         }
     }
-}
