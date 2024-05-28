@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Ecom_AIUB.Models.Product>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<main>
+    <section class="container" style="max-width: 1120px; padding: 0 3rem;">
+        <h2 class="m-0 pb-3">Our <span style="color: rgb(237, 81, 25);">Popular</span> Products</h2>
+        <p>
+            Experience top-notch quality and style with our sought-after <br>selections. Discover a world of comfort, design, and value.
+        </p>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 mt-5">
+            @if (Model.Any() && Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <div class="col m-2">
+                        <a href="" class="text-decoration-none">
+                            <div class="card h-100 border-0">
+                                <img src="~/images/@item.Image" class="card-img-top" alt="@item.Name" />
+                                <div class="card-body">
+                                    <h5 class="card-title text-black">@item.Name</h5>
+                                    <p class="card-text text-black"><strong>Category:</strong> @item.Category.Name</p>
+                                    <p class="card-text"><strong style="color: rgb(237, 81, 25);">@item.Price.ToString("C")</strong> </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>@ViewBag.ProductMessage</p>
+            }
+        </div>
+    </section>
+</main>

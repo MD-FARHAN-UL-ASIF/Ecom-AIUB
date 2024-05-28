@@ -1,0 +1,20 @@
+﻿@model Ecom_AIUB.Models.Category
+
+@{
+    ViewData["Title"] = "Delete Category";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h1>Delete Category</h1>
+    <hr />
+    <h3>Are you sure you want to delete this category?</h3>
+    <div>
+        <h4>Name:</h4>
+        <h5>@Model.Name</h5>
+    </div>
+    <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id">
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a href="@Url.Action("Index", "Category")" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

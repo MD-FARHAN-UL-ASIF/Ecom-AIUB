@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ecom_AIUB</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Ecom_AIUB.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="container mt-3">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="~/assets/images/header-logo.svg" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <img height="16px" width="16px" src="~/assets/icons/hamburger.svg" />
+                    </span>
+                </button>
+                <div class="offcanvas offcanvas-start w-75" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+                            <img src="~/assets/images/header-logo.svg" />
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                            
+                        </button>
+                    </div>
+                    <div class="offcanvas-body d-flex align-items-center">
+                        <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/products">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Contact Us</a>
+                            </li>
+                            <!--
+                                <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dropdown
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </li>
+                            -->
+                        </ul>
+                            <a class="nav-link text-decoration-none text-black" aria-current="page" href="/login">Login/Explore More</a>
+                        <!--
+                            <form class="d-flex" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                            </form>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-dark text-white mb-0 pb-0 border-top">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 gx-5 py-5 mx-auto" style="max-width: 1120px !important; padding: 0 3rem;">
+            <div class="col d-flex flex-column gap-3">
+                <img src="~/assets/images/footer-logo.svg" alt="footer logo">
+                <p>
+                    Get shoes ready for the new term at your nearest Nike store. Find
+                    Your perfect Size In Store. Get Rewards
+                </p>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white p-2 rounded-circle">
+                        <img src="~/assets/icons/facebook.svg" alt="Facebok" />
+                    </div>
+                    <div class="bg-white p-2 rounded-circle">
+                        <img src="~/assets/icons/instagram.svg" alt="Instagram" />
+                    </div>
+                    <div class="bg-white p-2 rounded-circle">
+                        <img src="~/assets/icons/twitter.svg" alt="Twitter" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <h4>Products</h4>
+                <a class="text-decoration-none text-white" href="#">Sneaker-1</a>
+                <br />
+                <a class="text-decoration-none text-white" href="#">Sneaker-2</a>
+                <br />
+                <a class="text-decoration-none text-white" href="#">Sneaker-3</a>
+            </div>
+            <div class="col">
+                <h4>Help</h4>
+                <a class="text-decoration-none text-white" href="#">About us</a>
+                <br />
+                <a class="text-decoration-none text-white" href="#">FAQs</a>
+                <br />
+                <a class="text-decoration-none text-white" href="#">Privacy policy</a>
+            </div>
+            <div class="col">
+                <h4>Get in touch</h4>
+                <a class="text-decoration-none text-white" href="#">customer@nike.com</a>
+                <br />
+                <a class="text-decoration-none text-white" href="#">+92554862354</a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

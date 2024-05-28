@@ -1,0 +1,19 @@
+﻿@model Ecom_AIUB.Models.Category
+
+@{
+    ViewData["Title"] = "Create Category";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h1>Create Category</h1>
+    <hr />
+    <form asp-action="Create">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>

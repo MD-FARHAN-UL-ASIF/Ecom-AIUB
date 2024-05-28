@@ -1,0 +1,98 @@
+﻿@model List<Ecom_AIUB.Models.Cart>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<main>
+    <section class="container" style="max-width: 1120px; padding: 0 3rem;">
+        <div>
+            <h5>Yourt Cart</h5>
+            <table class="table" id="content">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int count = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@count</th>
+                            <td>@item.Product.Name</td>
+                            <td>
+                                <svg class="increase" onclick="increase(@item.Id)" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM5 5V19H19V5H5ZM11 11V7H13V11H17V13H13V17H11V13H7V11H11Z"></path></svg>
+                                @item.Quantity
+                                <svg class="decrease" onclick="decrease(@item.Id)" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336 256H176" /></svg>
+                            </td>
+                            <td>@item.Price</td>
+                            <td>
+                                <button id="remove" onclick="remove(@item.Id)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        count++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<script>
+    function increase(id) {
+        fetch(`/cart/increase/${id}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                refresh()
+                console.log("increase", id);
+            })
+            .catch(error => Toast);
+    }
+
+    function decrease(id) {
+        fetch(`/cart/decrease/${id}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                refresh()
+                console.log("decrease", id);
+            })
+            .catch(error => Toast);
+    }
+
+    function remove(id) {
+        fetch(`/cart/remove/${id}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                refresh()
+                console.log("remove", id);
+            })
+            .catch(error => Toast);
+    }
+
+    function refresh(){
+        $('#content').load(location.href + " #content")
+    }
+
+    let Toast = document.createElement('div');
+    Toast.innerHTML = `
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+          <div id="liveToast" class="toast text-danger" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+              Something went wrong.
+            </div>
+          </div>
+        </div>
+    `
+</script>
