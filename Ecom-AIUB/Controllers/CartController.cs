@@ -55,7 +55,7 @@ namespace Ecom_AIUB.Controllers
                     var product = await db.Products.FindAsync(id);
                     if (product != null && product.Quantity > 0)
                     {
-                        var cart = await db.Carts.Where(x => x.ProductId == id).FirstOrDefaultAsync();
+                        var cart = await db.Carts.Where(x => x.ProductId == id && x.UserId == user.Id).FirstOrDefaultAsync();
                         if (cart != null)
                         {
                             cart.Quantity += 1;

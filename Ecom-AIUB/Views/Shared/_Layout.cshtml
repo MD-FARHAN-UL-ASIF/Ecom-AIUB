@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        *,*::before,*::after{
+            margin:0px;
+            padding: 0px;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
         body {
             overflow-x: hidden;
         }
@@ -25,7 +31,7 @@
         }
     </style>
 </head>
-<body class="d-flex flex-column gap-3">
+<body>
     <header class="container mt-3">
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
@@ -90,10 +96,10 @@
     </div>
 
     <footer class="border-top">
-        <div class="bg-dark text-white mb-0 pb-0">
+        <div class="bg-dark text-white mb-0 pb-5">
             <div class="footer-container">
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 gx-5 py-5">
-                    <div class="col d-flex flex-column gap-3">
+                    <div class="col d-flex flex-column gap-3 p-3">
                         <img src="~/assets/images/footer-logo.svg" alt="footer logo">
                         <p>
                             Get shoes ready for the new term at your nearest Nike store. Find
@@ -111,7 +117,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col p-3">
                         <h4>Products</h4>
                         <a class="text-decoration-none text-white" href="#">Sneaker-1</a>
                         <br />
@@ -119,7 +125,7 @@
                         <br />
                         <a class="text-decoration-none text-white" href="#">Sneaker-3</a>
                     </div>
-                    <div class="col">
+                    <div class="col p-3">
                         <h4>Help</h4>
                         <a class="text-decoration-none text-white" href="#">About us</a>
                         <br />
@@ -127,7 +133,7 @@
                         <br />
                         <a class="text-decoration-none text-white" href="#">Privacy policy</a>
                     </div>
-                    <div class="col">
+                    <div class="col p-3">
                         <h4>Get in touch</h4>
                         <a class="text-decoration-none text-white" href="#">customer@nike.com</a>
                         <br />
@@ -137,6 +143,7 @@
             </div>
         </div>
     </footer>
+    
     <!--<script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>-->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -148,12 +155,12 @@
     <script>
         $('.hero_slide').slick({
             autoplay: true,
-            autoplaySpeed: 2000,
+            autoplaySpeed: 5000,
         }); 
         $('.slide_products').slick({
             slidesToShow: 4,
             autoplay: true,
-            autoplaySpeed: 2000,
+            autoplaySpeed: 5000,
             responsive: [
                 {
                     breakpoint: 1024,
@@ -183,7 +190,7 @@
         });
         $('.product_page_slide').slick({
             autoplay: true,
-            autoplaySpeed: 2000,
+            autoplaySpeed: 5000,
         }); 
     </script>
     @await RenderSectionAsync("Scripts", required: false)

@@ -1,0 +1,75 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="mb-5">
+    <div class="container mt-5" style="max-width: 1120px; padding: 0 3rem;">
+        <div class="row row-cols-1 row-cols-md-2 g-5">
+            <div class="col">
+                <img style="height:100%; width:100%;" src="~/images/@Model.productData.Image" alt="Product Image" />
+            </div>
+            <div class="col py-3">
+                <h6 style="color: rgb(237, 81, 25);">@Model.productData.Category.Name</h6>
+                <h4 class="fw-bold">@Model.productData.Name</h4>
+                <p class="pt-4">@Model.productData.Description</p>
+                <h6 class="pt-4 fw-bold" style="color: rgb(237, 81, 25);">$@Model.productData.Price</h6>
+                <h6 class="pb-4 fw-bold"><strong>In Stock </strong>@Model.productData.Quantity</h6>
+                <span>Select Size</span>
+                <div class="row row-cols-2 row-cols-md-3 g-2 pt-3 pb-5">
+                    <div class="col">
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined-1" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="btn-check-outlined-1">M 6 / W 7.5</label><br>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined-2" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="btn-check-outlined-2">M 6.5 / W 8</label><br>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined-3" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="btn-check-outlined-3">M 7 / W 8.5</label><br>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined-4" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="btn-check-outlined-4">M 6 / W 7.5</label><br>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined-5" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="btn-check-outlined-5">M 6.5 / W 8</label><br>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined-6" autocomplete="off">
+                        <label class="btn btn-outline-secondary" for="btn-check-outlined-6">M 7 / W 8.5</label><br>
+                    </div>
+                </div>
+                <a class="text-decoration-none text-white py-2 px-3 rounded-3 fs-5 fw-bold" style="background-color: rgb(237, 81, 25);" href="/cart/add/@Model.productData.Id">Add to cart</a>
+            </div>
+        </div>
+    </div>
+</section>
+<hr />
+<section class="my-5 container" style="max-width: 1120px; padding: 0 3rem;">
+    <div class="mt-5">
+        <h3>Related Products</h3>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            @foreach (var product in Model.allProducts)
+            {
+                <div class=" col px-2">
+                    <a href="/product/@product.Id" class="text-decoration-none">
+                        <div class="card h-100 border-0">
+                            <img src="~/images/@product.Image" class="card-img-top" alt="@product.Name" />
+                            <div class="card-body">
+                                <h5 class="card-title text-black">@product.Name</h5>
+                                <p class="card-text text-black"><strong>Category:</strong> @product.Category.Name</p>
+                                <p class="card-text"><strong style="color: rgb(237, 81, 25);">@product.Price.ToString("C")</strong></p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+

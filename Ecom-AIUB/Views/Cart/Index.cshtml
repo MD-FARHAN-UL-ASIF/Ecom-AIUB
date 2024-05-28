@@ -1,16 +1,16 @@
 ﻿@model List<Ecom_AIUB.Models.Cart>
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <main>
-    <section class="container" style="max-width: 1120px; padding: 0 3rem;">
-        <div>
-            <h5>Yourt Cart</h5>
-            <table class="table" id="content">
-                <thead>
-                    <tr>
+    <section id="content" class="container" style="max-width: 1120px; padding: 0 3rem; min-height:70vh;">
+        <div class="my-5">
+            <h5 class="mb-4">Yourt Cart</h5>
+            <table class="table">
+                <thead style="background-color: rgb(237, 81, 25);" class="text-white">
+                    <tr class="rounded-top">
                         <th scope="col">#</th>
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
@@ -21,26 +21,86 @@
                 <tbody>
                     @{
                         int count = 1;
+                        decimal total = 0;
                     }
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="p-3">
                             <th scope="row">@count</th>
-                            <td>@item.Product.Name</td>
-                            <td>
-                                <svg class="increase" onclick="increase(@item.Id)" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM5 5V19H19V5H5ZM11 11V7H13V11H17V13H13V17H11V13H7V11H11Z"></path></svg>
-                                @item.Quantity
-                                <svg class="decrease" onclick="decrease(@item.Id)" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336 256H176" /></svg>
+                            <td><span>@item.Product.Name</span></td>
+                            <td class="d-flex gap-3">
+                                <svg class="increase text-success" onclick="increase(@item.Id)" height="25px" width="25px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM5 5V19H19V5H5ZM11 11V7H13V11H17V13H13V17H11V13H7V11H11Z"></path></svg>
+                                <span class="pb-2">@item.Quantity</span>
+                                <svg class="decrease text-danger" onclick="decrease(@item.Id)" height="25px" width="25px" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336 256H176" /></svg>
                             </td>
-                            <td>@item.Price</td>
+                            <td><span>$@item.Price</span></td>
                             <td>
-                                <button id="remove" onclick="remove(@item.Id)" class="btn btn-danger">Remove</button>
+                                <svg onclick="remove(@item.Id)" class="text-danger" height="25px" width="25px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8ZM7 5V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V5H22V7H2V5H7ZM9 4V5H15V4H9ZM9 12V18H11V12H9ZM13 12V18H15V12H13Z"></path></svg>
                             </td>
                         </tr>
+                        total += @item.Price;
                         count++;
                     }
                 </tbody>
+                
             </table>
+
+            <div class="mt-5 row row-cols-1 row-cols-md-2">
+                @{
+                    decimal subtotal = (total + (total / 100 * 2));
+                    decimal vat = subtotal - total;
+                    decimal charge = 8.00M;
+                    decimal grandTotal = total + vat + charge;
+                }
+                <div class="col">
+                    <h4 class="mb-3">Address Information</h4>
+                    <form asp-action="" asp-controller="" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="address">
+                                Shipping address:
+                            </label>
+                            <input class="form-control" type="type" id="address" name="address" value="" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postCode">
+                                Post Code
+                            </label>
+                            <input class="form-control" type="type" id="postCode" name="postCode" value="" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="city">
+                                City
+                            </label>
+                            <select class="form-select" name="city" id="city">
+                                <option>city</option>
+                            </select>
+                        </div>
+                        <button class="px-2 py-1 rounded text-white border-0" style="background-color: rgb(237, 81, 25);">Proceed to Payment</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <h4 class="mb-3">Order Information</h4>
+                    <table class="table">
+                        <tr>
+                            <th scope="col">Total Price</th>
+                            <td scope="col">$@total</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Vat</th>
+                            <td scope="col">$@vat</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Delivery Charge</th>
+                            <td scope="col">$@charge</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Grand Total</th>
+                            <td scope="col"><strong>$@grandTotal</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 </main>

@@ -28,9 +28,23 @@ namespace Ecom_AIUB.Controllers
         }
 
         [HttpGet]
-        [Route("/products/{id}")]
-        public IActionResult Details(int id)
+        [Route("/product/{id}")]
+        public async Task<IActionResult> Details(int id)
         {
+            var product = await _db.Products.Where(x => x.Id == id).Include(x => x.Category).FirstOrDefaultAsync();
+            if(product != null)
+            {
+                var products = await _db.Products.Where(x => x.Category_Id == product.Category_Id).ToListAsync();
+
+                var data = new
+                {
+                    productData = product,
+                    allProducts = products
+                };
+
+                return View(data);
+            }
+            ViewBag.ErrMessage = "Unable to find the product!!";
             return View();
         }
 
