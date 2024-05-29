@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nancy;
 using System.Collections.Specialized;
+using System.Text.Json;
+using static Ecom_AIUB.PaymentGateway.SSLCommerz;
 
 namespace Ecom_AIUB.Controllers
 {
@@ -250,6 +252,18 @@ namespace Ecom_AIUB.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
+            //add address
+            var address = new Address()
+            {
+                ShippingAddress = data.Address,
+                City = data.City,
+                PostCode = data.PostCode,
+                UserId = user.Id
+            };
+
+            await db.Addresses.AddAsync(address);
+            await db.SaveChangesAsync();
+
             var carts = await db.Carts.Where(x => x.UserId == user.Id).ToListAsync();
             if (carts.Count <= 0)
             {
@@ -257,7 +271,106 @@ namespace Ecom_AIUB.Controllers
             }
 
             var productsName = new List<string>();
+            var categoryId = new List<int>();
+            var productId = new List<int>();
 
+            decimal price = 0M;
+
+            foreach (var cart in carts)
+            {
+                var product = await db.Products.FirstOrDefaultAsync(p => p.Id == cart.ProductId);
+                if (product != null)
+                {
+                    price += product.Price;
+                    productsName.Add(product.Name);
+                    categoryId.Add(product.Category_Id);
+                    productId.Add(product.Id);
+                }
+            }
+
+            var trx_id = new Guid();
+
+            var baseUrl = Request.Scheme + "://" + Request.Host;
+
+            // CREATING LIST OF POST DATA
+            // Creating list of post data
+            var PostData = new NameValueCollection
+            {
+                { "total_amount", price.ToString("F2") },
+                { "tran_id", trx_id.ToString() },
+                { "success_url", $"{baseUrl}/payment/success" },
+                { "fail_url", $"{baseUrl}/payment/fail" },
+                { "cancel_url", $"{baseUrl}/" },
+                { "version", "3.00" },
+                { "cus_name", user.Name },
+                { "cus_email", user.Email },
+                { "cus_add1", data.Address },
+                { "cus_add2", "Address Line Two" },
+                { "cus_city", data.City },
+                { "cus_state", "State Name" },
+                { "cus_postcode", data.PostCode },
+                { "cus_country", "Bangladesh" },
+                { "cus_phone", user.PhoneNumber },
+                { "cus_fax", "0171111111" },
+                { "ship_name", "ABC XY" },
+                { "ship_add1", "Address Line One" },
+                { "ship_add2", "Address Line Two" },
+                { "ship_city", "City Name" },
+                { "ship_state", "State Name" },
+                { "ship_postcode", "Post Code" },
+                { "ship_country", "Country" },
+                { "value_a", user.Id.ToString() },
+                { "value_b", productId.ToString() },
+                { "value_c", data.City },
+                { "value_d", data.PostCode },
+                { "shipping_method", "NO" },
+                { "num_of_item", carts.Count.ToString() },
+                { "product_name", string.Join(", ", productsName) },
+                { "product_profile", "general" },
+                { "product_category", categoryId.ToString() }
+            };
+
+            //we can get from email notificaton
+            var storeId = "bootc6608eba3cb6dc";
+            var storePassword = "bootc6608eba3cb6dc@ssl";
+            var isSandboxMood = true;
+
+            SSLCommerz sslcz = new SSLCommerz(storeId, storePassword, isSandboxMood);
+
+            string response = response = sslcz.InitiateTransaction(PostData);
+
+            Console.WriteLine($"Redirect URL: {response}");
+
+            return Redirect(response);
+        }
+
+        [HttpPost]
+        [Route("/payment/success")]
+        public async Task<IActionResult> Success(SSLCommerzValidatorResponse data)
+        {
+            if (string.IsNullOrWhiteSpace(data.status) || data.status.ToString() != "VALID")
+            {
+                ViewBag.SuccessInfo = "There was an error while processing your payment. Please try again.";
+                return View();
+            }
+
+            int user_id = Convert.ToInt32(data.value_a);
+
+            var user = await db.Users.FirstOrDefaultAsync(x => x.Id == user_id);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            HttpContext.Session.SetString("email", user.Email);
+
+            var carts = await db.Carts.Where(x => x.UserId == user.Id).ToListAsync();
+            if (carts.Count <= 0)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var productsName = new List<string>();
             decimal price = 0M;
 
             foreach (var cart in carts)
@@ -270,71 +383,74 @@ namespace Ecom_AIUB.Controllers
                 }
             }
 
-            var trx_id = new Guid();
+            string TrxID = data.tran_id.ToString();
+            // AMOUNT and Currency FROM DB FOR THIS TRANSACTION
+            string amount = price.ToString();
+            string currency = "BDT";
 
-            var baseUrl = Request.Scheme + "://" + Request.Host;
-
-            // CREATING LIST OF POST DATA
-            NameValueCollection PostData = new NameValueCollection();
-
-            PostData.Add("total_amount", $"{price}");
-            PostData.Add("tran_id", $"{trx_id}");
-            PostData.Add("success_url", baseUrl + "/payment/success");
-            PostData.Add("fail_url", baseUrl + "/Cart/CheckoutFail");
-            PostData.Add("cancel_url", baseUrl + "/Cart/CheckoutCancel");
-
-            PostData.Add("version", "3.00");
-            PostData.Add("cus_name", $"{user.Name}");
-            PostData.Add("cus_email", $"{user.Email}");
-            PostData.Add("cus_add1", $"{data.Address}");
-            PostData.Add("cus_add2", "Address Line Tw");
-            PostData.Add("cus_city", $"{data.City}");
-            PostData.Add("cus_state", "State Nam");
-            PostData.Add("cus_postcode", $"{data.PostCode}");
-            PostData.Add("cus_country", "Bangladesh");
-            PostData.Add("cus_phone", $"{user.PhoneNumber}");
-            PostData.Add("cus_fax", "0171111111");
-            PostData.Add("ship_name", "ABC XY");
-            PostData.Add("ship_add1", "Address Line On");
-            PostData.Add("ship_add2", "Address Line Tw");
-            PostData.Add("ship_city", "City Nam");
-            PostData.Add("ship_state", "State Nam");
-            PostData.Add("ship_postcode", "Post Cod");
-            PostData.Add("ship_country", "Countr");
-            PostData.Add("value_a", $"{user.Id}");
-            PostData.Add("value_b", "ref00");
-            PostData.Add("value_c", "ref00");
-            PostData.Add("value_d", "ref00");
-            PostData.Add("shipping_method", "NO");
-            PostData.Add("num_of_item", $"{carts.Count}");
-            PostData.Add("product_name", $"{productsName}");
-            PostData.Add("product_profile", "general");
-            PostData.Add("product_category", "Demo");
-
-            //we can get from email notificaton
             var storeId = "bootc6608eba3cb6dc";
             var storePassword = "bootc6608eba3cb6dc@ssl";
-            var isSandboxMood = true;
 
-            SSLCommerz sslcz = new SSLCommerz(storeId, storePassword, isSandboxMood);
+            SSLCommerz sslcz = new SSLCommerz(storeId, storePassword, true);
+            var response = sslcz.OrderValidate(TrxID, amount, currency, Request);
 
-            string response = sslcz.InitiateTransaction(PostData);
+            var jsonData = JsonSerializer.Serialize(data);
+            decimal orderAmount = Decimal.Parse(data.amount);
 
-            return Redirect(response);
-        }
+            string stringValue = data.value_b;
+            List<int> integerList = new List<int>();
 
-        [HttpGet]
-        [Route("/payment/success")]
-        public IActionResult Success()
-        {
+            string[] parts = stringValue.Split(',');
+            foreach (string part in parts)
+            {
+                int intValue;
+                if (int.TryParse(part, out intValue))
+                {
+                    integerList.Add(intValue);
+                }
+                else
+                {
+                    
+                }
+            }
+
+            var address = await db.Addresses
+                                .Where(x => x.UserId == user.Id)
+                                .OrderByDescending(x => x.Id)
+                                .FirstOrDefaultAsync();
+
+            if (address == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (response)
+            {
+                var order = new Order()
+                {
+                    CustomerName = user.Name,
+                    CustomerEmail = user.Email,
+                    TransactionId = data.tran_id,
+                    Amount = orderAmount,
+                    OrderDate = DateTime.Parse(data.tran_date),
+                    Response = jsonData,
+                    ProductsId = integerList,
+                    AddressId = address.Id,
+                };
+
+                await db.Orders.AddAsync(order);
+                
+                if(await db.SaveChangesAsync() > 0)
+                {
+                    var cart = await db.Carts.ToListAsync();
+                    db.Carts.RemoveRange(cart);
+                    await db.SaveChangesAsync();
+                }
+            }
+
+            var successInfo = $"Validation Response: {response}";
+            ViewBag.SuccessInfo = successInfo;
             return View();
-        }
-
-        [HttpPost]
-        [Route("/payment/success")]
-        public IActionResult Success(string data) 
-        { 
-            return View(data); 
         }
 
         [Route("/payment/fail")]

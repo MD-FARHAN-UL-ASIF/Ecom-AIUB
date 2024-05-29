@@ -38,9 +38,28 @@ namespace Ecom_AIUB.PaymentGateway
 
         public string InitiateTransaction(NameValueCollection PostData, bool GetGateWayList = false)
         {
+            if (PostData == null)
+            {
+                throw new ArgumentNullException(nameof(PostData), "PostData cannot be null");
+            }
+
+            // Log PostData before adding store credentials
+            foreach (string key in PostData)
+            {
+                Console.WriteLine($"Before Adding Credentials - {key}: {PostData[key]}");
+            }
+
             PostData.Add("store_id", this.Store_ID);
             PostData.Add("store_passwd", this.Store_Pass);
+
+            // Log PostData after adding store credentials
+            foreach (string key in PostData)
+            {
+                Console.WriteLine($"After Adding Credentials - {key}: {PostData[key]}");
+            }
+
             string response = this.SendPost(PostData);
+
             try
             {
                 SSLCommerzInitResponse resp = new JavaScriptSerializer().Deserialize<SSLCommerzInitResponse>(response);
@@ -52,7 +71,7 @@ namespace Ecom_AIUB.PaymentGateway
                     }
                     else
                     {
-                        return resp.GatewayPageURL.ToString();
+                        return resp.GatewayPageURL;
                     }
                 }
                 else
@@ -62,11 +81,11 @@ namespace Ecom_AIUB.PaymentGateway
             }
             catch (Exception e)
             {
-                throw new Exception(e.Message.ToString());
+                throw new Exception(e.Message);
             }
-
             return response;
         }
+
         public bool OrderValidate(string MerchantTrxID, string MerchantTrxAmount, string MerchantTrxCurrency, HttpRequest req)
         {
             bool hash_verified = this.ipn_hash_verify(req);
