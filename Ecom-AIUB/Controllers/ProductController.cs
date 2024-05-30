@@ -1,6 +1,7 @@
 ﻿using Ecom_AIUB.EF;
 using Ecom_AIUB.Models;
 using Ecom_AIUB.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +23,11 @@ namespace Ecom_AIUB.Controllers
 
         [HttpGet]
         [Route("/products")]
-        public IActionResult Index()
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var products = await _db.Products.Include(p => p.Category).ToListAsync();
+            return View(products);
         }
 
         [HttpGet]
@@ -32,7 +35,7 @@ namespace Ecom_AIUB.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var product = await _db.Products.Where(x => x.Id == id).Include(x => x.Category).FirstOrDefaultAsync();
-            if(product != null)
+            if (product != null)
             {
                 var products = await _db.Products.Where(x => x.Category_Id == product.Category_Id).ToListAsync();
 
@@ -50,6 +53,7 @@ namespace Ecom_AIUB.Controllers
 
         [HttpGet]
         [Route("/products/create")]
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult Create()
         {
             var categories = _db.Category.ToList();
@@ -58,6 +62,7 @@ namespace Ecom_AIUB.Controllers
 
         [HttpPost]
         [Route("/products/create")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create(ProductDTO data)
         {
             string FileName = UploadedFile(data);
@@ -70,7 +75,7 @@ namespace Ecom_AIUB.Controllers
             else
             {
 
-                if (!ModelState.IsValid) 
+                if (!ModelState.IsValid)
                 {
                     var product = new Product()
                     {
@@ -86,9 +91,9 @@ namespace Ecom_AIUB.Controllers
                     _db.Products.Add(product);
                     if (await _db.SaveChangesAsync() > 0)
                     {
-                        return RedirectToAction("Index","Home");
+                        return RedirectToAction("Index", "Home");
                     }
-                    else 
+                    else
                     {
                         ViewBag.ErrMessage = "Something went wrong! There was a problem storing the data.";
                         return View();
@@ -97,10 +102,73 @@ namespace Ecom_AIUB.Controllers
             }
             return View();
         }
-        public IActionResult Edit()
+        [HttpGet]
+        [Route("/products/edit/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var product = await _db.Products.FindAsync(id);
+            if (product == null)
+            {
+                ViewBag.ErrMessage = "Product not found!";
+                return View();
+            }
+
+            var categories = await _db.Category.ToListAsync();
+            var productDTO = new ProductDTO
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Manufacturer = product.Manufacturer,
+                Category_Id = product.Category_Id,
+                Quantity = product.Quantity,
+                ExistingImage = product.Image
+            };
+
+            ViewBag.Categories = categories;
+            return View(productDTO);
         }
+
+        [HttpPost]
+        [Route("/products/edit/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Edit(int id, ProductDTO data)
+        {
+                var product = await _db.Products.FindAsync(data.Id);
+                if (product != null)
+                {
+                    product.Name = data.Name;
+                    product.Description = data.Description;
+                    product.Price = data.Price;
+                    product.Manufacturer = data.Manufacturer;
+                    product.Category_Id = data.Category_Id;
+                    product.Quantity = data.Quantity;
+
+                    if (data.Image != null)
+                    {
+                        if (!string.IsNullOrEmpty(data.ExistingImage))
+                        {
+                            string filePath = Path.Combine(webHostEnvironment.WebRootPath, "images", data.ExistingImage);
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                        }
+                        product.Image = UploadedFile(data);
+                    }
+
+                    _db.Products.Update(product);
+                    await _db.SaveChangesAsync();
+
+                    return RedirectToAction("Index", "Product");
+                }
+
+            ViewBag.Categories = await _db.Category.ToListAsync();
+            return View(data);
+        }
+
         public IActionResult Delete()
         {
             return View();
@@ -129,6 +197,24 @@ namespace Ecom_AIUB.Controllers
             ViewBag.ErrMessage = "Something went wrong!";
             return View();
         }
+
+        [HttpGet]
+        [Route("/price/low")]
+        public async Task<JsonResult> PriceToLow()
+        {
+            var products = await _db.Products.OrderBy(x => x.Price).ToListAsync();
+            return Json(products);
+        }
+
+        [HttpGet]
+        [Route("/price/high")]
+        public async Task<JsonResult> PriceToHigh()
+        {
+            var products = await _db.Products.OrderByDescending(x => x.Price).ToListAsync();
+            return Json(products);
+        }
+
+
 
         private string UploadedFile(ProductDTO data)
         {

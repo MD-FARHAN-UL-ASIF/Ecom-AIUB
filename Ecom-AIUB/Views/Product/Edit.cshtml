@@ -1,0 +1,91 @@
+﻿@model Ecom_AIUB.Models.DTOs.ProductDTO
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main>
+    <section class="container" style="max-width: 1120px; padding: 0 3rem;">
+        @if (!string.IsNullOrEmpty(ViewBag.ErrMessage))
+        {
+            <p class="text-danger">@ViewBag.ErrMessage</p>
+        }
+        <div class="d-flex justify-content-center">
+            <form asp-action="Edit" asp-controller="Product" class="col-12 col-md-8" enctype="multipart/form-data" method="post">
+                <h2 class="mb-5">Edit Product</h2>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Name">Name</label>
+                    <div class="">
+                        <input class="form-control" type="text" name="Name" id="Name" value="@Model.Name">
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Price">Price</label>
+                    <div class="">
+                        <input class="form-control" type="number" name="Price" id="Price" value="@Model.Price">
+                        @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Manufacturer">Manufacturer</label>
+                    <div class="">
+                        <input class="form-control" type="text" name="Manufacturer" id="Manufacturer" value="@Model.Manufacturer">
+                        @Html.ValidationMessageFor(model => model.Manufacturer, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Category_Id">Category</label>
+                    <div class="">
+                        <select class="form-control" name="Category_Id" id="Category_Id">
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option value="@category.Id" selected="@((category.Id == Model.Category_Id) ? "selected" : null)">
+                                    @category.Name
+                                </option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Category_Id, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Quantity">Quantity</label>
+                    <div class="">
+                        <input class="form-control" type="number" name="Quantity" id="Quantity" value="@Model.Quantity">
+                        @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Image">Product Image</label>
+                    <div class="">
+                        <input class="form-control" type="file" name="Image" id="Image">
+                        @if (!string.IsNullOrEmpty(Model.ExistingImage))
+                        {
+                            <img src="~/images/@Model.ExistingImage" alt="Current Image" style="width: 100px; height: 100px;" />
+                            <input type="hidden" name="ExistingImage" value="@Model.ExistingImage" />
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3 col-12 col-md-6 w-100">
+                    <label class="fw-medium" for="Description">Description</label>
+                    <div class="">
+                        <textarea class="form-control" name="Description" id="Description">@Model.Description</textarea>
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

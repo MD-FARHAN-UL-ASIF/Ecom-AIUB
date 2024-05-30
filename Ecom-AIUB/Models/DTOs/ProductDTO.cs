@@ -12,6 +12,7 @@ namespace Ecom_AIUB.Models.DTOs
         public int Category_Id { get; set; }
         public int Quantity { get; set; }
         public IFormFile Image { get; set; }
+        public string ExistingImage { get; set; }
         public virtual Category Category { get; set; }
     }
 }

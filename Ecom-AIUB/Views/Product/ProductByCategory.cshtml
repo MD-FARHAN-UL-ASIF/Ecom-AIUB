@@ -17,12 +17,12 @@
 {
     <section class="container" style="max-width:1140px;">
         <div class="row">
-            <div class="col-12 col-md-3 bg-light rounded-3">
+            <div class="col-12 col-md-3 rounded-3" style="background-color:#AAAAAA">
                 <div class="px-2">
                     <h4 class="my-3">Category</h4>
                     @foreach (var category in Model.categoriesData)
                     {
-                        <a class="text-decoration-none text-black" href="#">
+                        <a class="text-decoration-none text-black" href="/category/products/@category.Id">
                             <div class="border-bottom shadow-sm bg-white py-2 rounded my-1 px-3">
                                 @category.Name
                             </div>
@@ -45,10 +45,13 @@
             <div class="col-12 col-md-9">
                 <div class="row">
                     <div class="col-12 col-md-6"><h1>@Model.categoryData.Name</h1></div>
-                    <div class="col-12 col-md-6 d-flex justify-content-end"> 
-                        <select class="form-select w-50">
-                            <option class="form-control" value="value">Sort by price</option>
+                    <div class="col-12 col-md-6 d-flex justify-content-end">
+                        <select id="sortOrder" class="form-select w-50">
+                            <option disabled readonly selected>Name: A-Z</option>
+                            <option value="lowToHigh">Price: Low to High</option>
+                            <option value="highToLow">Price: High to Low</option>
                         </select>
+
                     </div>
                 </div>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 mt-3">
@@ -77,3 +80,37 @@ else
 {
     <p>@ViewBag.ErrMessage</p>
 }
+
+<script>
+    $('#sortOrder').change(function () {
+        var sortOrder = $(this).val();
+
+        if (sortOrder === 'lowToHigh') {
+            $.ajax({
+                url: '/price/low',
+                type: 'GET',
+                success: function (response) {
+                    // Handle the response here, update the productsData section of the page
+                    console.log("low");
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        } else if (sortOrder === 'highToLow') {
+            $.ajax({
+                url: '/price/high',
+                type: 'GET',
+                success: function (response) {
+                    // Handle the response here, update the productsData section of the page
+                    console.log("high");
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    });
+</script>
+
+

@@ -1,0 +1,51 @@
+﻿@model Ecom_AIUB.Models.DTOs.UserDTO
+@{
+    ViewData["Title"] = "EditProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main>
+    <section class="container" style="max-width: 600px; padding: 20px;">
+        <div class="d-flex justify-content-center">
+            <form asp-action="EditProfile" asp-controller="User" class="col-12" method="post">
+                <h2 class="mb-4">Edit Profile</h2>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <div class="mb-3">
+                    <label class="form-label" for="Email">Email</label>
+                    <input disabled="" class="form-control" type="email" name="Email" id="Email" value="@Model.Email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Name">Name</label>
+                    <input class="form-control" type="text" name="Name" id="Name" value="@Model.Name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="PhoneNumber">Phone Number</label>
+                    <input class="form-control" type="tel" name="PhoneNumber" id="PhoneNumber" value="@Model.PhoneNumber" required>
+                </div>
+
+                <!--  <div class="mb-3">
+                      <label class="form-label" for="UserType">User Type</label>
+                      @if (Model.UserType == 1)
+                      {
+                          <input type="hidden" name="UserType" value="@Model.UserType" /> 
+                          <input disabled class="form-control" type="text" value="Admin"> 
+                      }
+                      else
+                      {
+                          <input type="hidden" name="UserType" value="@Model.UserType" /> 
+                          <input disabled class="form-control" type="text" value="User"> 
+                      }
+                     </div> -->
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn text-white fw-bold" style="background-color: rgb(237, 81, 25);">Save Changes</button>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

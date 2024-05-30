@@ -1,5 +1,6 @@
 ﻿using Ecom_AIUB.EF;
 using Ecom_AIUB.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,8 @@ namespace Ecom_AIUB.Controllers
 
         [HttpGet]
         [Route("category/create")]
+        [Authorize(Policy = "AdminOnly")]
+
         public IActionResult Create()
         {
             return View();
@@ -46,6 +49,8 @@ namespace Ecom_AIUB.Controllers
 
         [HttpPost]
         [Route("category/create")]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<IActionResult> Create(Category category)
         {
             if (ModelState.IsValid)
@@ -59,6 +64,8 @@ namespace Ecom_AIUB.Controllers
 
         [HttpGet]
         [Route("category/edit/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<IActionResult> Edit(int id)
         {
             var category = await _db.Category.FindAsync(id);
@@ -71,6 +78,8 @@ namespace Ecom_AIUB.Controllers
 
         [HttpPost]
         [Route("category/edit/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<IActionResult> Edit(int id, Category category)
         {
             if (id != category.Id)
@@ -103,6 +112,8 @@ namespace Ecom_AIUB.Controllers
 
         [HttpGet]
         [Route("category/delete/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _db.Category.FindAsync(id);

@@ -2,10 +2,10 @@
 using Ecom_AIUB.Models;
 using Ecom_AIUB.Models.DTOs;
 using Ecom_AIUB.PaymentGateway;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Nancy;
 using System.Collections.Specialized;
 using System.Text.Json;
 using static Ecom_AIUB.PaymentGateway.SSLCommerz;
@@ -25,12 +25,14 @@ namespace Ecom_AIUB.Controllers
 
         [HttpGet]
         [Route("/cart")]
+        [Authorize(Policy = "UserOnly")]
+
         public IActionResult Index()
         {
             var email = HttpContext.Session.GetString("email");
             if (email == null)
             {
-                return RedirectToAction("login", "Home");
+                return RedirectToAction("login", "User");
             }
 
             var user = db.Users.FirstOrDefault(x => x.Email == email);
@@ -384,7 +386,6 @@ namespace Ecom_AIUB.Controllers
             }
 
             string TrxID = data.tran_id.ToString();
-            // AMOUNT and Currency FROM DB FOR THIS TRANSACTION
             string amount = price.ToString();
             string currency = "BDT";
 
@@ -398,21 +399,27 @@ namespace Ecom_AIUB.Controllers
             decimal orderAmount = Decimal.Parse(data.amount);
 
             string stringValue = data.value_b;
-            List<int> integerList = new List<int>();
+            List<int> productIds = new List<int>();
 
-            string[] parts = stringValue.Split(',');
-            foreach (string part in parts)
+            _logger.LogInformation($"Raw value_b data: {stringValue}");
+
+            if (!string.IsNullOrEmpty(stringValue))
             {
-                int intValue;
-                if (int.TryParse(part, out intValue))
+                string[] parts = stringValue.Split(',');
+                foreach (string part in parts)
                 {
-                    integerList.Add(intValue);
-                }
-                else
-                {
-                    
+                    if (int.TryParse(part.Trim(), out int intValue))
+                    {
+                        productIds.Add(intValue);
+                    }
+                    else
+                    {
+                        _logger.LogError($"Failed to parse product ID from value_b: {part}");
+                    }
                 }
             }
+
+            _logger.LogInformation($"Parsed product IDs: {string.Join(", ", productIds)}");
 
             var address = await db.Addresses
                                 .Where(x => x.UserId == user.Id)
@@ -434,16 +441,15 @@ namespace Ecom_AIUB.Controllers
                     Amount = orderAmount,
                     OrderDate = DateTime.Parse(data.tran_date),
                     Response = jsonData,
-                    ProductsId = integerList,
+                    ProductsId = productIds,
                     AddressId = address.Id,
                 };
 
                 await db.Orders.AddAsync(order);
-                
-                if(await db.SaveChangesAsync() > 0)
+
+                if (await db.SaveChangesAsync() > 0)
                 {
-                    var cart = await db.Carts.ToListAsync();
-                    db.Carts.RemoveRange(cart);
+                    db.Carts.RemoveRange(carts);
                     await db.SaveChangesAsync();
                 }
             }
@@ -453,10 +459,33 @@ namespace Ecom_AIUB.Controllers
             return View();
         }
 
+
+
         [Route("/payment/fail")]
         public IActionResult Fail()
         {
             return View();
         }
+
+        [HttpGet]
+        [Route("/cart/count")]
+        public IActionResult GetCartItemCount()
+        {
+            var email = HttpContext.Session.GetString("email");
+            if (email == null)
+            {
+                return Json(new { count = 0 });
+            }
+
+            var user = db.Users.FirstOrDefault(x => x.Email == email);
+            if (user == null)
+            {
+                return Json(new { count = 0 });
+            }
+
+            var itemCount = db.Carts.Count(x => x.UserId == user.Id);
+            return Json(new { count = itemCount });
+        }
+
     }
 }

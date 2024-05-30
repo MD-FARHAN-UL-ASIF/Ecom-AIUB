@@ -1,8 +1,26 @@
-﻿
-@{
-    ViewData["Title"] = "AdminDashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿    @{
+        ViewData["Title"] = "AdminDashboard";
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
 
-<h1>AdminDashboard</h1>
+    <h1 class="text-center">Admin Dashboard</h1>
+
+    <div class="dashboard-container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="row mb-3">
+                    <div class="col-md-12 mb-3">
+                        <a href="@Url.Action("Index", "Category")" class="btn btn-lg btn-secondary btn-block">MANAGE PRODUCT CATEGORY</a>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <a href="@Url.Action("Index", "Product")" class="btn btn-lg btn-secondary btn-block">MANAGE PRODUCT</a>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <a href="@Url.Action("Index", "User")" class="btn btn-lg btn-secondary btn-block">MANAGE USER</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more rows with buttons as needed -->
+        </div>
+    </div>
 

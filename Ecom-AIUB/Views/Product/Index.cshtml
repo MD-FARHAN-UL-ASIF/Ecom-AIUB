@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Ecom_AIUB.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    h2 {
+        color: #343a40;
+    }
+
+    .table {
+        background-color: #ffffff;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .img-thumbnail {
+        object-fit: cover;
+    }
+</style>
+
+<div class="container my-4">
+    <h2 class="text-center mb-4">Products</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Manufacturer</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@product.Description</td>
+                        <td>@product.Price</td>
+                        <td>@product.Manufacturer</td>
+                        <td>@product.Category?.Name</td>
+                        <td>@product.Quantity</td>
+                        <td>
+                            <img src="@Url.Content("~/images/" + product.Image)" alt="Product Image" class="img-thumbnail" width="50" height="50" />
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "Product", new { id = product.Id })" class="btn btn-info btn-sm">Details</a>
+                            <a href="@Url.Action("Edit", "Product", new { id = product.Id })" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
